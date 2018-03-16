@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    
+    <!-- login -->
+    <string id="1000">Избор</string>
+    <string id="103">Разархиватор</string>
+    <string id="104">Път до разархиваторът</string>
+    
+</strings>
