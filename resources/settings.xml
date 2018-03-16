@@ -3,7 +3,7 @@
 	<!-- User Entries -->
 	<category label="1000">
         <setting id="sep1" label="1000" type="lsep"/>
-        <setting label="103" type="enum" id="player" values="Kodi|Android(ZArchiver)|Windows(Rar)|Linux(Rar)" default="0"/>
+        <setting label="103" type="enum" id="player" values="Kodi|Android(Rarlab)|Windows(Rar)|Linux(Rar)" default="0"/>
 		<setting label="104" type="file" id="settings_files_path" default="" option="writeable"/>
     </category>
 </settings>
