@@ -25,7 +25,8 @@ __profile__    = unicode(xbmc.translatePath( __addon__.getAddonInfo('profile')),
 __resource__   = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib' )), 'utf-8')
 __temp__       = unicode(xbmc.translatePath( os.path.join( __profile__, 'temp', '')), 'utf-8')
 __name_dict__  = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib', 'dict.json' )), 'utf-8')
-
+player = xbmcaddon.Addon().getSetting('player')
+rarfile = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib', 'rarfile' )), 'utf-8')
 sys.path.append (__resource__)
 import nsub
 from nsub import list_key, log_my, read_sub, get_sub, get_info, select_1
@@ -134,15 +135,41 @@ def Download(id,url,filename, stack=False):
     subFile.write(sub['data'])
     subFile.close()
     xbmc.sleep(500)
-    kodi_major_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
-    if 'rar' in ff and kodi_major_version >= 18:
-     src = 'archive' + '://' + urllib.quote_plus(ff) + '/'
-     (cdirs, cfiles) = xbmcvfs.listdir(src)
-     for cfile in cfiles:
+    if '0' in player:
+     kodi_major_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
+     if 'rar' in ff and kodi_major_version >= 18:
+      src = 'archive' + '://' + urllib.quote_plus(ff) + '/'
+      (cdirs, cfiles) = xbmcvfs.listdir(src)
+      for cfile in cfiles:
         fsrc = '%s%s' % (src, cfile)
         xbmcvfs.copy(fsrc, __temp__ + cfile)
-    else:
-     xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
+     else:
+      xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
+    if '1' in player:
+      if 'zip' in ff:
+       xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
+      else:
+        app      = 'com.rarlab.rar'
+        intent   = 'android.intent.action.VIEW'
+        dataType = ''
+        dataURI  = ff
+        arch = 'StartAndroidActivity("%s", "%s", "%s", "%s")' % (app, intent, dataType, dataURI)
+        xbmc.executebuiltin(arch)
+        #xbmc.executebuiltin('XBMC.StartAndroidActivity("ru.zdevs.zarchiver","android.intent.action.VIEW","",ff)')
+    if '2' in player:
+      import rarfile
+      if 'rar' in ff:
+       archive = rarfile.RarFile(ff)
+       archive.extract(__temp__)
+      else:
+       xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
+    if '3' in player:
+      import rarfile
+      if 'rar' in ff:
+       archive = rarfile.RarFile(ff)
+       archive.extract(__temp__)
+      else:
+       xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
     #xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
     Notify('{0}'.format(sub['fname']),'load')
 
