@@ -149,13 +149,13 @@ def Download(id,url,filename, stack=False):
       if 'zip' in ff:
        xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
       else:
-        app      = 'com.rarlab.rar'
-        intent   = 'android.intent.action.VIEW'
-        dataType = ''
-        dataURI  = ff
-        arch = 'StartAndroidActivity("%s", "%s", "%s", "%s")' % (app, intent, dataType, dataURI)
-        xbmc.executebuiltin(arch)
-        #xbmc.executebuiltin('XBMC.StartAndroidActivity("ru.zdevs.zarchiver","android.intent.action.VIEW","",ff)')
+        #app      = 'com.rarlab.rar'
+        #intent   = 'android.intent.action.VIEW'
+        #dataType = ''
+        #dataURI  = ff
+        #arch = 'StartAndroidActivity("%s", "%s", "%s", "%s")' % (app, intent, dataType, dataURI)
+        #xbmc.executebuiltin(arch)
+        xbmc.executebuiltin('XBMC.StartAndroidActivity("ru.zdevs.zarchiver","","",ff)')
     if '2' in player:
       import rarfile
       if 'rar' in ff:
