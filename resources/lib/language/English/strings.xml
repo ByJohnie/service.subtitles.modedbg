@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<strings>
+    
+    <!-- login -->
+    <string id="1000">Choose</string>
+    <string id="103">Archiver method</string>
+    <string id="104">Path to unarchiver</string>
+    
+</strings>
