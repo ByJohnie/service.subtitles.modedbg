@@ -20,7 +20,7 @@ def select_1(list):
 def read_sub(*items):
   l = []
 
-  update(os.path.basename(items[0]['file_original_path']),
+  (os.path.basename(items[0]['file_original_path']),
           'subs_search',
           'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % items[0]
           )
@@ -33,7 +33,7 @@ def read_sub(*items):
         l.extend(ll)
     except Exception as e:
       log_my('unacs.read_sub', str(e))
-      update(os.path.basename(item['file_original_path']),
+      (os.path.basename(item['file_original_path']),
               'exception',
               'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
               sys.exc_info()
@@ -45,7 +45,7 @@ def read_sub(*items):
         l.extend(ll)
     except Exception as e:
       log_my('subs_sab.read_sub', str(e))
-      update(os.path.basename(item['file_original_path']),
+      (os.path.basename(item['file_original_path']),
               'exception',
               'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
               sys.exc_info()
@@ -61,17 +61,17 @@ def get_sub(id, sub_url, filename):
     try:
       r=unacs.get_sub(id, sub_url, filename)
     except:
-      update(id, 'exception', sub_url, sys.exc_info())
+      (id, 'exception', sub_url, sys.exc_info())
     else:
-      update(r.get('fname','empty'), 'subs_download', sub_url)
+      (r.get('fname','empty'), 'subs_download', sub_url)
 
   else:
     try:
       r=subs_sab.get_sub(id, sub_url, filename)
     except:
-      update(id, 'exception',sub_url, sys.exc_info())
+      (id, 'exception',sub_url, sys.exc_info())
     else:
-      update(r.get('fname','empty'), 'subs_download', sub_url)
+      (r.get('fname','empty'), 'subs_download', sub_url)
   return r
 
 def get_dbg_dat(file):
