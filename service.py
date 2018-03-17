@@ -27,6 +27,7 @@ __temp__       = unicode(xbmc.translatePath( os.path.join( __profile__, 'temp', 
 __name_dict__  = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib', 'dict.json' )), 'utf-8')
 player = xbmcaddon.Addon().getSetting('player')
 rarfile = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib', 'rarfile' )), 'utf-8')
+unrar1 = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib', 'unrar' )), 'utf-8')
 sys.path.append (__resource__)
 import nsub
 from nsub import list_key, log_my, read_sub, get_sub, get_info, select_1
@@ -149,13 +150,13 @@ def Download(id,url,filename, stack=False):
       if 'zip' in ff:
        xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
       else:
-        app      = 'com.rarlab.rar'
-        intent   = 'android.intent.action.VIEW'
-        dataType = 'application/rar'
-        dataURI  = ff
-        arch = 'StartAndroidActivity("%s", "%s", "%s", "%s")' % (app, intent, dataType, dataURI)
-        xbmc.executebuiltin(arch)
-        #xbmc.executebuiltin('XBMC.StartAndroidActivity("ru.zdevs.zarchiver","","",ff)')
+       app      = 'com.rarlab.rar'
+       intent   = 'android.intent.action.VIEW'
+       dataType = 'application/rar'
+       dataURI  = ff
+       arch = 'StartAndroidActivity("%s", "%s", "%s", "%s")' % (app, intent, dataType, dataURI)
+       xbmc.executebuiltin(arch)
+       #xbmc.executebuiltin('XBMC.StartAndroidActivity("com.rarlab.rar","android.intent.action.SEND","application/rar",ff)')
     if '2' in player:
       import rarfile
       if 'rar' in ff:
@@ -172,15 +173,26 @@ def Download(id,url,filename, stack=False):
        xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
     #xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
     Notify('{0}'.format(sub['fname']),'load')
+    if '1' in player:
+      xbmc.sleep(10000)
+      dirs, files = xbmcvfs.listdir(__temp__)
+      files.extend(dirs)
+      appendsubfiles(subtitle_list, __temp__, files)
 
-    dirs, files = xbmcvfs.listdir(__temp__)
-    files.extend(dirs)
-    appendsubfiles(subtitle_list, __temp__, files)
+      if len(subtitle_list) >= 2:
+       subtitle_list = select_1(subtitle_list)
+      if xbmcvfs.exists(subtitle_list[0]):
+       return subtitle_list
 
-    if len(subtitle_list) >= 2:
-      subtitle_list = select_1(subtitle_list)
-    if xbmcvfs.exists(subtitle_list[0]):
-      return subtitle_list
+    else:
+     dirs, files = xbmcvfs.listdir(__temp__)
+     files.extend(dirs)
+     appendsubfiles(subtitle_list, __temp__, files)
+
+     if len(subtitle_list) >= 2:
+       subtitle_list = select_1(subtitle_list)
+     if xbmcvfs.exists(subtitle_list[0]):
+       return subtitle_list
 
   else:
     Notify('Error','downlod subtitles')
@@ -264,10 +276,17 @@ if params['action'] == 'search' or params['action'] == 'manualsearch':
 
 elif params['action'] == 'download':
   ## we pickup all our arguments sent from def Search()
-  subs = Download(params["ID"],params["link"],params["filename"])
-  ## we can return more than one subtitle for multi CD versions, for now we are still working out how to handle that in XBMC core
-  for sub in subs:
+  if '1' in player:
+   subs = Download(params["ID"],params["link"],params["filename"])
+   xbmc.sleep(12000)
+   ## we can return more than one subtitle for multi CD versions, for now we are still working out how to handle that in XBMC core
+   for sub in subs:
     listitem = xbmcgui.ListItem(label=sub)
     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=sub,listitem=listitem,isFolder=False)
-
+  else:
+    subs = Download(params["ID"],params["link"],params["filename"])
+   ## we can return more than one subtitle for multi CD versions, for now we are still working out how to handle that in XBMC core
+    for sub in subs:
+     listitem = xbmcgui.ListItem(label=sub)
+     xbmcplugin.addDirectoryItem(handle=int(sys.argv[1]),url=sub,listitem=listitem,isFolder=False)
 xbmcplugin.endOfDirectory(int(sys.argv[1])) ## send end of directory to XBMC
