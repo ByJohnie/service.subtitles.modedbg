@@ -278,7 +278,7 @@ elif params['action'] == 'download':
   ## we pickup all our arguments sent from def Search()
   if '1' in player:
    subs = Download(params["ID"],params["link"],params["filename"])
-   xbmc.sleep(12000)
+   xbmc.sleep(5000)
    ## we can return more than one subtitle for multi CD versions, for now we are still working out how to handle that in XBMC core
    for sub in subs:
     listitem = xbmcgui.ListItem(label=sub)
