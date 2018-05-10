@@ -11,6 +11,7 @@ import xbmcgui
 import xbmcplugin
 import unicodedata
 import simplejson as j
+import requests
 
 __addon__ = xbmcaddon.Addon()
 __author__     = __addon__.getAddonInfo('author')
@@ -101,7 +102,7 @@ def IsSubFile(file):
   if ext not in exts: return False
   if ext != ".txt": return True
   # Check for README text files
-  readme = re.search(ur'subsunacs\.net|subs\.sab\.bz|танете част|прочети|^read ?me|procheti', name, re.I)
+  readme = re.search(ur'subsunacs\.net|subs\.sab\.bz|танете част|прочети|^read ?me|procheti|UNACS|- README|...UNACS|README|READ', name, re.I)
   return readme == None
 
 def appendsubfiles(subtitle_list, basedir, files):
@@ -171,6 +172,39 @@ def Download(id,url,filename, stack=False):
        archive.extract(__temp__)
       else:
        xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
+    if '4' in player:
+      if 'rar' in ff:
+        xbmcvfs.delete(ff)
+        headers = {
+            "Host": "subsunacs.net",
+            "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0",
+            "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+            "Accept-Language": "en-US,en;q=0.5",
+            "Accept-Encoding": "gzip, deflate, br",
+            "DNT": "1",
+            "Connection": "keep-alive",
+            "Upgrade-Insecure-Requests": "1",
+            "Cache-Control": "max-age=0",
+          }
+        url = 'https://subsunacs.net' + url + '!'
+        print url
+        req = requests.get(url, headers=headers)
+        match = re.compile('<a href="(.+?)">(.+?)</a></label><label').findall(req.text)
+        for suburl, subname in match:
+          subname = subname.encode('cp1251', 'ignore').decode('cp1251', 'ignore').encode('utf-8', 'ignore').replace(' ','.')
+          #subname = subname.encode('utf-8')
+          subtitri = __temp__+subname
+          try:
+            url2 = 'https://subsunacs.net' + suburl
+            req2 = requests.get(url2, headers=headers)
+            f = open(subtitri, 'wb')
+            f.write(req2.content)
+            f.close()
+            xbmc.sleep(1000)
+          except:
+            pass
+      else:
+       xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True) 
     #xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
     Notify('{0}'.format(sub['fname']),'load')
     if '1' in player:
