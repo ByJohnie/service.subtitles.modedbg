@@ -174,8 +174,9 @@ def Download(id,url,filename, stack=False):
        xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
     if '4' in player:
       if 'rar' in ff:
-        xbmcvfs.delete(ff)
-        headers = {
+        if 'subsunacs' in ff:
+         xbmcvfs.delete(ff)
+         headers = {
             "Host": "subsunacs.net",
             "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -186,11 +187,11 @@ def Download(id,url,filename, stack=False):
             "Upgrade-Insecure-Requests": "1",
             "Cache-Control": "max-age=0",
           }
-        url = 'https://subsunacs.net' + url + '!'
-        print url
-        req = requests.get(url, headers=headers)
-        match = re.compile('<a href="(.+?)">(.+?)</a></label><label').findall(req.text)
-        for suburl, subname in match:
+         url = 'https://subsunacs.net' + url + '!'
+         print url
+         req = requests.get(url, headers=headers)
+         match = re.compile('<a href="(.+?)">(.+?)</a></label><label').findall(req.text)
+         for suburl, subname in match:
           subname = subname.encode('cp1251', 'ignore').decode('cp1251', 'ignore').encode('utf-8', 'ignore').replace(' ','.')
           #subname = subname.encode('utf-8')
           subtitri = __temp__+subname
@@ -203,6 +204,14 @@ def Download(id,url,filename, stack=False):
             xbmc.sleep(1000)
           except:
             pass
+        if 'subs.sab.bz' in ff:
+         kodi_major_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
+         if kodi_major_version >= 18:
+          src = 'archive' + '://' + urllib.quote_plus(ff) + '/'
+         (cdirs, cfiles) = xbmcvfs.listdir(src)
+         for cfile in cfiles:
+          fsrc = '%s%s' % (src, cfile)
+          xbmcvfs.copy(fsrc, __temp__ + cfile) 
       else:
        xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True) 
     #xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
