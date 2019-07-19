@@ -102,7 +102,7 @@ def IsSubFile(file):
   if ext not in exts: return False
   if ext != ".txt": return True
   # Check for README text files
-  readme = re.search(ur'subsunacs\.net|subs\.sab\.bz|танете част|прочети|^read ?me|procheti|UNACS|- README|...UNACS|README|READ', name, re.I)
+  readme = re.search(ur'subsunacs\.net|subs\.sab\.bz|танете част|прочети|^read ?me|procheti|UNACS|- README|...UNACS|README|READ|YavkA|Yavka|yavka', name, re.I)
   return readme == None
 
 def appendsubfiles(subtitle_list, basedir, files):
