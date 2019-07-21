@@ -27,7 +27,7 @@ def get_id_url_n(txt, list):
               'info': info.encode('utf-8', 'replace'),
               'year': '',
               'cds': '',
-              'fps': '0.0',
+              'fps': '',
               'rating': '0.0',
               'id': __name__})
   return
