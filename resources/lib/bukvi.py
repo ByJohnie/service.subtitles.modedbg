@@ -21,8 +21,6 @@ def get_id_url_n(txt, list):
   for links in soup.find_all("td", {"style": ["text-align: left;"]}):
     link = links.find('a', href=True)
     info = link.text#.split('/')[0]
-    print info.encode('utf-8', 'replace')
-    print link.text.encode('utf-8', 'replace')
     #yr = re.search('.*\((\d+)',link.text).group(1)
     
     list.append({'url': link['href'].encode('utf-8', 'replace'),
