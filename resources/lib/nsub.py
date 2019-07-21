@@ -7,6 +7,7 @@ from common import *
 import unacs
 import subs_sab
 import yavka
+import bukvi
 
 def select_1(list):
   l = []
@@ -61,7 +62,18 @@ def read_sub(*items):
               'exception',
               'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
               sys.exc_info()
-              )        
+              )
+    try:
+      ll = bukvi.read_sub(search_str)
+      if ll:
+        l.extend(ll)
+    except Exception as e:
+      log_my('bukvi.read_sub', str(e))
+      (os.path.basename(item['file_original_path']),
+              'exception',
+              'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
+              sys.exc_info()
+              )      
   if not l:
     return None
 
@@ -80,9 +92,16 @@ def get_sub(id, sub_url, filename):
     try:
       r=yavka.get_sub(id, sub_url, filename)
     except:
-      (id, 'exception', sub_url, sys.exc_info())
+      (id, 'exception', sub_url, sys.exc_info())  
     else:
       (r.get('fname','empty'), 'subs_download', sub_url)
+  elif id == 'bukvi':
+    try:
+      r=bukvi.get_sub(id, sub_url, filename)
+    except:
+      (id, 'exception', sub_url, sys.exc_info())
+    else:
+      (r.get('fname','empty'), 'subs_download', sub_url)    
   else:
     try:
       r=subs_sab.get_sub(id, sub_url, filename)
