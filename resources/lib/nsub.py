@@ -3,13 +3,15 @@
 
 import sys
 import os
+import xbmcaddon
+import xbmcgui
 from common import *
 import unacs
 import subs_sab
 import yavka
 import bukvi
 import easternspirit
-
+__addon__ = xbmcaddon.Addon()
 def select_1(list):
   l = []
   ls = []
@@ -30,62 +32,55 @@ def read_sub(*items):
 
   for item in items:
     search_str = get_search_string(item)
-    try:
-      ll = unacs.read_sub(search_str, item['year'])
-      if ll:
-        l.extend(ll)
-    except Exception as e:
-      log_my('unacs.read_sub', str(e))
-      (os.path.basename(item['file_original_path']),
-              'exception',
-              'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
-              sys.exc_info()
-              )
-
-    try:
-      ll = subs_sab.read_sub(search_str, item['year'])
-      if ll:
-        l.extend(ll)
-    except Exception as e:
-      log_my('subs_sab.read_sub', str(e))
-      (os.path.basename(item['file_original_path']),
-              'exception',
-              'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
-              sys.exc_info()
-              )
-    try:
-      ll = yavka.read_sub(search_str, item['year'])
-      if ll:
-        l.extend(ll)
-    except Exception as e:
-      log_my('yavka.read_sub', str(e))
-      (os.path.basename(item['file_original_path']),
-              'exception',
-              'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
-              sys.exc_info()
-              )
-    try:
-      ll = bukvi.read_sub(search_str, item['year'])
-      if ll:
-        l.extend(ll)
-    except Exception as e:
-      log_my('bukvi.read_sub', str(e))
-      (os.path.basename(item['file_original_path']),
-              'exception',
-              'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
-              sys.exc_info()
-              )
-    try:
-      ll = easternspirit.read_sub(search_str)
-      if ll:
-        l.extend(ll)
-    except Exception as e:
-      log_my('easternspirit.read_sub', str(e))
-      (os.path.basename(item['file_original_path']),
-              'exception',
-              'title:%(title)s,tvshow:%(tvshow)s,season:%(season)s,episode:%(episode)s' % item,
-              sys.exc_info()
-              )  
+    if ' / ' in search_str:
+      search_str = re.sub(r' /.*','',search_str)
+    if __addon__.getSetting('unacscom') == 'true':  
+      try:
+        ll = unacs.read_sub(search_str, item['year'])
+        if ll:
+          l.extend(ll)
+      except Exception as e:
+        log_my('unacs.read_sub', str(e))
+    else:
+      __addon__.getSetting('unacscom') == 'false'
+    if __addon__.getSetting('sab_bz') == 'true':  
+      try:
+        ll = subs_sab.read_sub(search_str, item['year'])
+        if ll:
+          l.extend(ll)
+      except Exception as e:
+        log_my('subs_sab.read_sub', str(e))
+    else:
+      __addon__.getSetting('sab_bz') == 'false'   
+    if __addon__.getSetting('yavkanet') == 'true':    
+      try:
+        #tv series fix
+        search_yavka = re.sub('(\d{1,2})x(\d{1,2})', lambda x: "- S{}E{}".format((x.group(1).zfill(2)),x.group(2).zfill(2)),search_str)
+        ll = yavka.read_sub(search_yavka, item['year'])
+        if ll:
+          l.extend(ll)
+      except Exception as e:
+        log_my('yavka.read_sub', str(e))
+    else:
+      __addon__.getSetting('yavkanet') == 'false'   
+    if __addon__.getSetting('bukvibg') == 'true':      
+      try:
+        ll = bukvi.read_sub(search_str, item['year'])
+        if ll:
+          l.extend(ll)
+      except Exception as e:
+        log_my('bukvi.read_sub', str(e))
+    else:
+      __addon__.getSetting('bukvibg') == 'false'      
+    if __addon__.getSetting('easternspiritorg') == 'true':    
+      try:
+        ll = easternspirit.read_sub(search_str)
+        if ll:
+          l.extend(ll)
+      except Exception as e:
+        log_my('easternspirit.read_sub', str(e))
+    else:
+      __addon__.getSetting('easternspiritorg') == 'false'     
   if not l:
     return None
 
