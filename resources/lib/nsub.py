@@ -65,7 +65,7 @@ def read_sub(*items):
       __addon__.getSetting('yavkanet') == 'false'   
     if __addon__.getSetting('bukvibg') == 'true':      
       try:
-        ll = bukvi.read_sub(search_str, item['year'])
+        ll = bukvi.read_sub(search_str)
         if ll:
           l.extend(ll)
       except Exception as e:
