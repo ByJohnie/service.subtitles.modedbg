@@ -1,0 +1,62 @@
+msgid ""
+msgstr ""
+
+msgctxt "#30000"
+msgid "Search Modules"
+msgstr ""
+
+msgctxt "#30001"
+msgid "[COLOR navy]SUBS[/COLOR].UNACS.net"
+msgstr ""
+
+msgctxt "#30002"
+msgid "[COLOR navy]SUBS[/COLOR].SAB.bz"
+msgstr ""
+
+msgctxt "#30003"
+msgid "[COLOR navy]Yavka[/COLOR].net"
+msgstr ""
+
+msgctxt "#30004"
+msgid "BU[COLOR olivedrab]KV[/COLOR][COLOR palegoldenrod]I[/COLOR][COLOR darkred]BG[/COLOR]"
+msgstr ""
+
+msgctxt "#30005"
+msgid "[COLOR khaki]EASTERNSPIRIT[/COLOR].org"
+msgstr ""
+
+msgctxt "#30006"
+msgid "Extractor"
+msgstr ""
+
+msgctxt "#30007"
+msgid "Kodi"
+msgstr ""
+
+msgctxt "#30008"
+msgid "Winrar - Windows/Linux only"
+msgstr ""
+
+msgctxt "#30009"
+msgid "Rar path"
+msgstr ""
+
+msgctxt "#30010"
+msgid "Extract.Me"
+msgstr ""
+
+msgctxt "#30011"
+msgid "Online-Convert.Com"
+msgstr ""
+
+msgctxt "#30012"
+msgid "apiKey - need registering"
+msgstr ""
+
+msgctxt "#30013"
+msgid "[COLOR red]ANDROID.RARLAB[/COLOR] MANUAL MODE, NEEDS TO BE INSTALED BEFORE USE"
+msgstr ""
+
+msgctxt "#30014"
+msgid "MANUAL TIME OF EXTRACTION /YOU NEED/"
+msgstr ""
