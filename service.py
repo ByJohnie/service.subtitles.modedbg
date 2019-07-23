@@ -41,6 +41,7 @@ if __addon__.getSetting('firstrun') == 'true':
     __addon__.setSetting('xbmc_extractor', 'false')
     __addon__.setSetting('firstrun', 'false')
   else:
+    __addon__.setSetting('firstrun', 'false')
     if __addon__.getSetting('xbmc_extractor') == 'true':
       __addon__.setSetting('rarlab', 'false')
       __addon__.setSetting('extract_me', 'false')
