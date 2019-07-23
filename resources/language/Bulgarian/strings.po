@@ -1,0 +1,62 @@
+msgid ""
+msgstr ""
+
+msgctxt "#30000"
+msgid "Search Modules"
+msgstr "Добавки за търсене"
+
+msgctxt "#30001"
+msgid "[COLOR navy]SUBS[/COLOR].UNACS.net"
+msgstr "[COLOR navy]SUBS[/COLOR]UNACS.net"
+
+msgctxt "#30002"
+msgid "[COLOR navy]SUBS[/COLOR].SAB.bz"
+msgstr "[COLOR navy]SUBS[/COLOR].SAB.bz"
+
+msgctxt "#30003"
+msgid "[COLOR navy]Yavka[/COLOR].net"
+msgstr "[COLOR navy]Yavka[/COLOR].net"
+
+msgctxt "#30004"
+msgid "BU[COLOR olivedrab]KV[/COLOR][COLOR palegoldenrod]I[/COLOR][COLOR darkred]BG[/COLOR]"
+msgstr "BU[COLOR olivedrab]KV[/COLOR][COLOR palegoldenrod]I[/COLOR][COLOR darkred]BG[/COLOR]"
+
+msgctxt "#30005"
+msgid "[COLOR khaki]EASTERNSPIRIT[/COLOR].org"
+msgstr "[COLOR khaki]EASTERNSPIRIT[/COLOR].org"
+
+msgctxt "#30006"
+msgid "Extractor"
+msgstr "Разархиватор"
+
+msgctxt "#30007"
+msgid "Kodi"
+msgstr "Коди"
+
+msgctxt "#30008"
+msgid "Winrar - Windows/Linux only"
+msgstr "Winrar само за  Windows/Linux"
+
+msgctxt "#30009"
+msgid "Rar path"
+msgstr "Папка с unrar разархиватор"
+
+msgctxt "#30010"
+msgid "Extract.Me"
+msgstr "Extract.Me"
+
+msgctxt "#30011"
+msgid "Online-Convert.Com"
+msgstr "Online-Convert.Com"
+
+msgctxt "#30012"
+msgid "apiKey - need registering"
+msgstr "apiKey - изисква регистрация"
+
+msgctxt "#30013"
+msgid "[COLOR red]ANDROID.RARLAB[/COLOR] MANUAL MODE, NEEDS TO BE INSTALED BEFORE USE"
+msgstr "[COLOR red]ANDROID.RARLAB[/COLOR] РЪЧЕН РЕЖИМ, НЕОБХОДИМО Е ДА\n Е ИНСТАЛИРАН ПРЕДИ ПОЛЗВАНЕ"
+
+msgctxt "#30014"
+msgid "MANUAL TIME OF EXTRACTION /YOU NEED/"
+msgstr "ВРЕМЕ КОЕТО ВИ Е НЕОБХОДИМО ДА РАЗАРХИВИРАТЕ \nСУБТИТРИТЕ"
