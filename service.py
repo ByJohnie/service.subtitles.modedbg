@@ -26,13 +26,47 @@ __profile__    = unicode(xbmc.translatePath( __addon__.getAddonInfo('profile')),
 __resource__   = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib' )), 'utf-8')
 __temp__       = unicode(xbmc.translatePath( os.path.join( __profile__, 'temp', '')), 'utf-8')
 __name_dict__  = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib', 'dict.json' )), 'utf-8')
-player = xbmcaddon.Addon().getSetting('player')
 rarfile = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib', 'rarfile' )), 'utf-8')
-unrar1 = unicode(xbmc.translatePath( os.path.join( __cwd__, 'resources', 'lib', 'unrar' )), 'utf-8')
 sys.path.append (__resource__)
 import nsub
 from nsub import list_key, log_my, read_sub, get_sub, get_info, select_1
 nsub.path = __temp__
+
+if __addon__.getSetting('firstrun') == 'true':
+  kodi_major_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
+  if kodi_major_version < 18:
+    xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%('Older version','Kodi ver.'+str(kodi_major_version)+' detected', '1000', __icon__))
+    __addon__.setSetting('extract_me', 'true')
+    xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%('Extract.Me','Activated you can switch in settings prefer extraction way', '5000', __icon__))
+    __addon__.setSetting('xbmc_extractor', 'false')
+    __addon__.setSetting('firstrun', 'false')
+  else:
+    if __addon__.getSetting('xbmc_extractor') == 'true':
+      __addon__.setSetting('rarlab', 'false')
+      __addon__.setSetting('extract_me', 'false')
+      __addon__.setSetting('online-convert-com', 'false')
+      __addon__.setSetting('android_rar', 'false')
+    elif __addon__.getSetting('rarlab') == 'true':
+      __addon__.setSetting('xbmc_extractor', 'false')
+      __addon__.setSetting('online-convert-com', 'false')
+      __addon__.setSetting('extract_me', 'false')
+      __addon__.setSetting('android_rar', 'false')
+    elif __addon__.getSetting('extract_me') == 'true':
+      __addon__.setSetting('xbmc_extractor', 'false')
+      __addon__.setSetting('rarlab', 'false')
+      __addon__.setSetting('online-convert-com', 'false')
+      __addon__.setSetting('android_rar', 'false')
+    elif __addon__.getSetting('online-convert-com') == 'true':
+      __addon__.setSetting('xbmc_extractor', 'false')
+      __addon__.setSetting('rarlab', 'false')
+      __addon__.setSetting('extract_me', 'false')
+      __addon__.setSetting('android_rar', 'false')
+    elif __addon__.getSetting('android_rar') == 'true':
+      __addon__.setSetting('xbmc_extractor', 'false')
+      __addon__.setSetting('rarlab', 'false')
+      __addon__.setSetting('online-convert-com', 'false')
+      __addon__.setSetting('extract_me', 'false')
+
 
 def namesubst(str):
   with open(__name_dict__, 'rb') as fd:
@@ -102,7 +136,7 @@ def IsSubFile(file):
   if ext not in exts: return False
   if ext != ".txt": return True
   # Check for README text files
-  readme = re.search(ur'subsunacs\.net|subs\.sab\.bz|танете част|прочети|^read ?me|procheti|UNACS|- README|...UNACS|README|READ|YavkA|Yavka|yavka', name, re.I)
+  readme = re.search(ur'subsunacs\.net|subs\.sab\.bz|танете част|прочети|^read ?me|procheti|UNACS|- README|...UNACS|README|READ|YavkA|Yavka|yavka|downloaded', name, re.I)
   return readme == None
 
 def appendsubfiles(subtitle_list, basedir, files):
@@ -137,46 +171,10 @@ def Download(id,url,filename, stack=False):
     subFile.write(sub['data'])
     subFile.close()
     xbmc.sleep(500)
-    if '0' in player:
-     kodi_major_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
-     if 'rar' in ff and kodi_major_version >= 18:
-      src = 'archive' + '://' + urllib.quote_plus(ff) + '/'
-      (cdirs, cfiles) = xbmcvfs.listdir(src)
-      for cfile in cfiles:
-        fsrc = '%s%s' % (src, cfile)
-        xbmcvfs.copy(fsrc, __temp__ + cfile)
-     else:
-      xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
-    if '1' in player:
-      if 'zip' in ff:
-       xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
-      else:
-       app      = 'com.rarlab.rar'
-       intent   = 'android.intent.action.VIEW'
-       dataType = 'application/rar'
-       dataURI  = ff
-       arch = 'StartAndroidActivity("%s", "%s", "%s", "%s")' % (app, intent, dataType, dataURI)
-       xbmc.executebuiltin(arch)
-       #xbmc.executebuiltin('XBMC.StartAndroidActivity("com.rarlab.rar","android.intent.action.SEND","application/rar",ff)')
-    if '2' in player:
-      import rarfile
-      if 'rar' in ff:
-       archive = rarfile.RarFile(ff)
-       archive.extract(__temp__)
-      else:
-       xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
-    if '3' in player:
-      import rarfile
-      if 'rar' in ff:
-       archive = rarfile.RarFile(ff)
-       archive.extract(__temp__)
-      else:
-       xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
-    if '4' in player:
-      if 'rar' in ff:
-        if 'subsunacs' in ff:
-         xbmcvfs.delete(ff)
-         headers = {
+    Notify('{0}'.format(sub['fname']),'load')
+    if id == 'unacs':
+      xbmcvfs.delete(ff)
+      headers = {
             "Host": "subsunacs.net",
             "User-Agent": "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0",
             "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
@@ -187,58 +185,187 @@ def Download(id,url,filename, stack=False):
             "Upgrade-Insecure-Requests": "1",
             "Cache-Control": "max-age=0",
           }
-         url = 'https://subsunacs.net' + url + '!'
-         print url
-         req = requests.get(url, headers=headers)
-         match = re.compile('<a href="(.+?)">(.+?)</a></label><label').findall(req.text)
-         for suburl, subname in match:
-          subname = subname.encode('cp1251', 'ignore').decode('cp1251', 'ignore').encode('utf-8', 'ignore').replace(' ','.')
-          #subname = subname.encode('utf-8')
-          subtitri = __temp__+subname
-          try:
-            url2 = 'https://subsunacs.net' + suburl
-            req2 = requests.get(url2, headers=headers)
-            f = open(subtitri, 'wb')
-            f.write(req2.content)
-            f.close()
-            xbmc.sleep(1000)
-          except:
-            pass
-        if 'subs.sab.bz' in ff:
-         kodi_major_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
-         if kodi_major_version >= 18:
-          src = 'archive' + '://' + urllib.quote_plus(ff) + '/'
-         (cdirs, cfiles) = xbmcvfs.listdir(src)
-         for cfile in cfiles:
-          fsrc = '%s%s' % (src, cfile)
-          xbmcvfs.copy(fsrc, __temp__ + cfile) 
-      else:
-       xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True) 
-    #xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
-    Notify('{0}'.format(sub['fname']),'load')
-    if '1' in player:
-      xbmc.sleep(10000)
-      dirs, files = xbmcvfs.listdir(__temp__)
-      files.extend(dirs)
-      appendsubfiles(subtitle_list, __temp__, files)
-
-      if len(subtitle_list) >= 2:
-       subtitle_list = select_1(subtitle_list)
-      if xbmcvfs.exists(subtitle_list[0]):
-       return subtitle_list
-
+      url = 'https://subsunacs.net' + url + '!'
+      req = requests.get(url, headers=headers)
+      match = re.compile('<a href="(.+?)">(.+?)</a></label><label').findall(req.text)
+      for suburl, subname in match:
+        subname = subname.encode('cp1251', 'ignore').decode('cp1251', 'ignore').encode('utf-8', 'ignore').replace(' ','.')
+        #suname = subname.encode('utf-8')
+        subtitri = __temp__+subname
+        try:
+          url2 = 'https://subsunacs.net' + suburl
+          req2 = requests.get(url2, headers=headers)
+          f = open(subtitri, 'wb')
+          f.write(req2.content)
+          f.close()
+          xbmc.sleep(1000)
+        except:
+          pass
     else:
-     dirs, files = xbmcvfs.listdir(__temp__)
-     files.extend(dirs)
-     appendsubfiles(subtitle_list, __temp__, files)
+      if __addon__.getSetting('xbmc_extractor') == 'true':
+        if '.zip' in ff:
+          xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
+          xbmcvfs.delete(ff)
+          #check for rars after zip extraction
+          unextracted_rars = xbmcvfs.listdir(__temp__)
+          for rars in unextracted_rars[1]:
+            if rars.endswith('.rar'):
+              src = 'archive' + '://' + urllib.quote_plus(__temp__+rars) + '/'
+              (cdirs, cfiles) = xbmcvfs.listdir(src)
+              for cfile in cfiles:
+                fsrc = '%s%s' % (src, cfile)
+                xbmcvfs.copy(fsrc, __temp__ + cfile)
+        else:
+          src = 'archive' + '://' + urllib.quote_plus(ff) + '/'
+          (cdirs, cfiles) = xbmcvfs.listdir(src)
+          for cfile in cfiles:
+            fsrc = '%s%s' % (src, cfile)
+            xbmcvfs.copy(fsrc, __temp__ + cfile)
 
-     if len(subtitle_list) >= 2:
-       subtitle_list = select_1(subtitle_list)
-     if xbmcvfs.exists(subtitle_list[0]):
-       return subtitle_list
+      elif __addon__.getSetting('rarlab') == 'true':
+        import rarfile
+        if '.rar' in ff:
+         archive = rarfile.RarFile(ff)
+         archive.extract(__temp__)
+         xbmcvfs.delete(ff)
+        else:
+         xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
+         xbmcvfs.delete(ff)
+         #check for rars after zip extraction
+         unextracted_rars = xbmcvfs.listdir(__temp__)
+         for rars in unextracted_rars[1]:
+           if rars.endswith('.rar'):
+             archive = rarfile.RarFile(__temp__+rars)
+             archive.extract(__temp__)
+
+      elif __addon__.getSetting('extract_me') == 'true':
+        if '.zip' in ff:
+          xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
+          xbmcvfs.delete(ff)
+          #check for rars after zip extraction
+          unextracted_rars = xbmcvfs.listdir(__temp__)
+          for rars in unextracted_rars[1]:
+            if rars.endswith('.rar'):
+              s = requests.Session()
+              r = s.get('https://extract.me/upload/')
+              mycook = re.search('uid=(.+?);',r.headers['Set-Cookie']).group(1)
+              fname = rars
+              files = {'files':(fname, open(__temp__+rars, 'rb'), "application/octet-stream")}
+              payload = {'uid': mycook,'files': filename}
+              r = s.post('https://extract.me/upload/', files=files, data=payload)
+              tmp_filename = r.json()['files'][0]['tmp_filename']
+              name = r.json()['files'][0]['name']
+              nexpayload = {'tmp_filename': tmp_filename,'archive_filename': name,'password':''}
+              r = s.post('https://extract.me/unpack/', data=nexpayload)
+              compres_to_zip = s.post('https://extract.me/compress/zip/'+mycook+'/'+tmp_filename)
+              zipped = compres_to_zip.json()['download_url']
+              nexturl = 'https://extract.me/'+mycook+zipped
+              ziper = s.get(nexturl)
+              zf =  re.search('.*\/(.+?\.zip)',zipped).group(1)
+              zname = __temp__+zf
+              f = open(zname, 'wb+')
+              f.write(ziper.content)
+              f.close()
+              #xbmc.executebuiltin(('XBMC.Extract doent extract zips lol
+              import zipfile
+              #xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (zname,__temp__,)).encode('utf-8'), True)
+              #xbmc.sleep(500)
+              with zipfile.ZipFile(zname, 'r') as zip_ref:
+                zip_ref.extractall(__temp__)   
+        else:
+          s = requests.Session()
+          r = s.get('https://extract.me/upload/')
+          mycook = re.search('uid=(.+?);',r.headers['Set-Cookie']).group(1)
+          fname = sub['fname']
+          files = {'files':(fname, open(ff, 'rb'), "application/octet-stream")}
+          payload = {'uid': mycook,'files': filename}
+          r = s.post('https://extract.me/upload/', files=files, data=payload)
+          tmp_filename = r.json()['files'][0]['tmp_filename']
+          name = r.json()['files'][0]['name']
+          nexpayload = {'tmp_filename': tmp_filename,'archive_filename': name,'password':''}
+          r = s.post('https://extract.me/unpack/', data=nexpayload)
+          compres_to_zip = s.post('https://extract.me/compress/zip/'+mycook+'/'+tmp_filename)
+          zipped = compres_to_zip.json()['download_url']
+          nexturl = 'https://extract.me/'+mycook+zipped
+          ziper = s.get(nexturl)
+          zf =  re.search('.*\/(.+?\.zip)',zipped).group(1)
+          f = open(__temp__+zf, 'wb+')
+          f.write(ziper.content)
+          f.close()
+          xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (__temp__+zf,__temp__,)).encode('utf-8'), True)
+          
+      elif __addon__.getSetting('online-convert-com') == 'true':
+        if '.zip' in ff:
+          xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
+          xbmcvfs.delete(ff)
+          #check for rars after zip extraction We try to extract from xbmc because not to wasting minutes in OCdotCom
+          unextracted_rars = xbmcvfs.listdir(__temp__)
+          for rars in unextracted_rars[1]:
+            if rars.endswith('.rar'):
+              src = 'archive' + '://' + urllib.quote_plus(__temp__+rars) + '/'
+              (cdirs, cfiles) = xbmcvfs.listdir(src)
+              for cfile in cfiles:
+                fsrc = '%s%s' % (src, cfile)
+                xbmcvfs.copy(fsrc, __temp__ + cfile)
+        else:
+          api_key = __addon__.getSetting('ocapi')
+          newendpoint = 'http://api2.online-convert.com/jobs'
+          data = {"conversion": [{"category": "archive","target": "zip"}]}
+          head = {'x-oc-api-key': api_key,'Content-Type': 'application/json','Cache-Control': 'no-cache'}
+          res = requests.post(newendpoint, data=json.dumps(data), headers=head)
+          match = re.compile('id":"(.+?)".+?server":"(.+?)"').findall(res.text)
+          for idj, servurl in match:
+            servurl = servurl.replace('\/','/')
+            nextendpont = servurl + '/upload-file/' + idj
+            file = {'file': open(ff, 'rb')}
+            head = {'x-oc-api-key': api_key}
+            res = requests.post(nextendpont, files=file, headers=head)
+            xbmc.sleep(2000)
+            res = requests.get(newendpoint, headers=head)
+            match2 = re.compile('"uri":"(http.+?zip)"').findall(res.text)
+            for dlzip in match2:
+             zipfile = dlzip.replace('\/','/')
+             subfile = zipfile.split("/")[-1]
+             r = requests.get(zipfile)
+             with open((__temp__+subfile), 'wb') as f:
+               f.write(r.content)
+               xbmc.sleep(500)
+               f.close()
+               xbmc.sleep(1000)
+               delurl = 'http://api2.online-convert.com/jobs/' +idj
+               head = {'x-oc-api-key': api_key,
+                      'Content-Type': 'application/json',
+                      'Cache-Control': 'no-cache'}
+               res = requests.delete(delurl, headers=head)
+               xbmc.sleep(500)
+               jj = __temp__+subfile
+               xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (jj,__temp__)), True)
+               
+      elif __addon__.getSetting('android_rar') == 'true':
+        if 'zip' in ff:
+          xbmc.executebuiltin(('XBMC.Extract("%s","%s")' % (ff,__temp__,)).encode('utf-8'), True)
+        else:
+          app      = 'com.rarlab.rar'
+          intent   = 'android.intent.action.VIEW'
+          dataType = 'application/rar'
+          dataURI  = ff
+          arch = 'StartAndroidActivity("%s", "%s", "%s", "%s")' % (app, intent, dataType, dataURI)
+          xbmc.executebuiltin(arch)
+
+    if __addon__.getSetting('android_rar') == 'true':
+      timer = __addon__.getSetting('ar_wait_time')
+      xbmc.sleep(int(timer)*1000)        
+    dirs, files = xbmcvfs.listdir(__temp__)
+    files.extend(dirs)
+    appendsubfiles(subtitle_list, __temp__, files)
+
+    if len(subtitle_list) >= 2:
+      subtitle_list = select_1(subtitle_list)
+    if xbmcvfs.exists(subtitle_list[0]):
+      return subtitle_list
 
   else:
-    Notify('Error','downlod subtitles')
+    Notify('Error','Bad format or ....')
     return []
 
 def normalizeString(str):
@@ -319,9 +446,9 @@ if params['action'] == 'search' or params['action'] == 'manualsearch':
 
 elif params['action'] == 'download':
   ## we pickup all our arguments sent from def Search()
-  if '1' in player:
+  if __addon__.getSetting('android_rar') == 'true':
    subs = Download(params["ID"],params["link"],params["filename"])
-   xbmc.sleep(5000)
+   xbmc.sleep(3000)
    ## we can return more than one subtitle for multi CD versions, for now we are still working out how to handle that in XBMC core
    for sub in subs:
     listitem = xbmcgui.ListItem(label=sub)
