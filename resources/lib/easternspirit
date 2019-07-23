@@ -64,7 +64,7 @@ def read_sub (mov):
 
   enc_values = urllib.urlencode(values)
   log_my('Url: ', (url)+ '/index.php?/search/&', 'Headers: ', (headers), 'Values: ', (enc_values))
-  request = urllib2.Request(url + '/index.php?/search/&'+enc_values, None, headers)
+  request = urllib2.Request(url + '/index.php?/search/&'+enc_values.replace('+','%20'), None, headers)
 
   response = urllib2.urlopen(request)
   log_my(response.code)
