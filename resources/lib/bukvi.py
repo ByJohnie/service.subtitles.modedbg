@@ -21,6 +21,8 @@ def get_id_url_n(txt, list):
   for links in soup.find_all("td", {"style": ["text-align: left;"]}):
     link = links.find('a', href=True)
     info = link.text#.split('/')[0]
+    print info.encode('utf-8', 'replace')
+    print link.text.encode('utf-8', 'replace')
     #yr = re.search('.*\((\d+)',link.text).group(1)
     
     list.append({'url': link['href'].encode('utf-8', 'replace'),
@@ -38,7 +40,7 @@ def get_data(l, key):
     out.append(d[key])
   return out
 
-def read_sub(mov, year):
+def read_sub (mov):
   list = []
 
   values['search'] = mov
@@ -47,7 +49,7 @@ def read_sub(mov, year):
   enc_values = urllib.urlencode(values)
   log_my('Url: ', (url) +enc_values, 'Headers: ', (headers))
 
-  request = urllib2.Request(url + enc_values, None, headers)
+  request = urllib2.Request(url + enc_values.replace('%20','+'), None, headers)
 
   response = urllib2.urlopen(request)
   log_my(response.code, BaseHTTPServer.BaseHTTPRequestHandler.responses[response.code][0])
