@@ -1,9 +1,25 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <settings>
-	<!-- User Entries -->
-	<category label="1000">
-        <setting id="sep1" label="1000" type="lsep"/>
-        <setting label="103" type="enum" id="player" values="Kodi|Android(Rarlab)|Windows(Rar)|Linux(Rar)|UNACSFILES" default="0"/>
-		<setting label="104" type="file" id="settings_files_path" default="" option="writeable"/>
+	<!-- User Modules -->
+	<category label="30000">
+        <setting id="sep1" label="30000" type="lsep"/>
+        <setting id="unacscom" type="bool" label="30001" default="true"/>
+	<setting id="sab_bz" type="bool" label="30002" default="true"/>
+	<setting id="yavkanet" type="bool" label="30003" default="true"/>
+	<setting id="bukvibg" type="bool" label="30004" default="true"/>
+	<setting id="easternspiritorg" type="bool" label="30005" default="true"/>
+	<setting label="" type="bool"   id="firstrun" visible="false" default="true"/>
+    </category>
+	<!-- User Extractor -->
+	<category label="30006">
+        <setting id="sep1" label="30006" type="lsep"/>
+        <setting id="xbmc_extractor" type="bool" label="30007" default="true"/>
+	<setting id="rarlab" type="bool" label="30008" default="false"/>
+	<setting id="settings_files_path" type="file" label="30009" default="" enable="eq(-1,true)" option="writeable"/>
+	<setting id="extract_me" type="bool" label="30010" default="false"/>
+	<setting id="online-convert-com" type="bool" label="30011" default="false"/>
+	<setting id="ocapi" type="text" label="30012" default="" enable="eq(-1,true)"/>
+	<setting id="android_rar" type="bool" label="30013" default="false"/>
+	<setting id="ar_wait_time" type="text" label="30014" default="20" enable="eq(-1,true)"/>
     </category>
 </settings>
