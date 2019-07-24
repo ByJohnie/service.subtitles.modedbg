@@ -6,12 +6,30 @@ import os
 import xbmcaddon
 import xbmcgui
 from common import *
-import unacs
-import subs_sab
-import yavka
-import bukvi
-import easternspirit
 __addon__ = xbmcaddon.Addon()
+if __addon__.getSetting('unacscom') == 'true':
+  import unacs
+else:
+  __addon__.getSetting('unacscom') == 'false'
+if __addon__.getSetting('sab_bz') == 'true':
+  import subs_sab
+else:
+  __addon__.getSetting('sab_bz') == 'false' 
+if __addon__.getSetting('yavkanet') == 'true':
+  import yavka
+else:
+  __addon__.getSetting('yavkanet') == 'false'
+if __addon__.getSetting('bukvibg') == 'true':
+  import bukvi
+else:
+  __addon__.getSetting('bukvibg') == 'false'
+if __addon__.getSetting('easternspiritorg') == 'true':
+  import easternspirit
+else:
+  __addon__.getSetting('easternspiritorg') == 'false'
+  
+
+
 def select_1(list):
   l = []
   ls = []
