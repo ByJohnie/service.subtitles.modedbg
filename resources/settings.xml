@@ -14,12 +14,12 @@
 	<category label="30006">
         <setting id="sep1" label="30006" type="lsep"/>
         <setting id="xbmc_extractor" type="bool" label="30007" default="true"/>
-	<setting id="rarlab" type="bool" label="30008" default="false"/>
-	<setting id="settings_files_path" type="file" label="30009" default="" enable="eq(-1,true)" option="writeable"/>
+	<setting id="rarlab" type="bool" label="30008" default="false" visible="System.Platform.Linux | System.Platform.Windows"/>
+	<setting id="settings_files_path" type="file" label="30009" default="" enable="eq(-1,true)" option="writeable" visible="System.Platform.Linux | System.Platform.Windows"/>
 	<setting id="extract_me" type="bool" label="30010" default="false"/>
 	<setting id="online-convert-com" type="bool" label="30011" default="false"/>
 	<setting id="ocapi" type="text" label="30012" default="" enable="eq(-1,true)"/>
-	<setting id="android_rar" type="bool" label="30013" default="false"/>
-	<setting id="ar_wait_time" type="text" label="30014" default="20" enable="eq(-1,true)"/>
+	<setting id="android_rar" type="bool" label="30013" default="false" visible="System.Platform.Android"/>
+	<setting id="ar_wait_time" type="text" label="30014" default="20" enable="eq(-1,true)" visible="System.Platform.Android"/>
     </category>
 </settings>
