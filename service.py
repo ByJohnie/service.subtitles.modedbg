@@ -35,13 +35,24 @@ nsub.path = __temp__
 if __addon__.getSetting('firstrun') == 'true':
   kodi_major_version = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
   if kodi_major_version < 18:
-    xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%('Older version','Kodi ver.'+str(kodi_major_version)+' detected', '1000', __icon__))
+    xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%('Older version','Kodi ver.'+str(kodi_major_version)+' detected', 1000, __icon__))
     __addon__.setSetting('extract_me', 'true')
-    xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%('Extract.Me','Activated you can switch in settings prefer extraction way', '5000', __icon__))
+    xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%('Extract.Me','Activated you can switch in settings prefer extraction way', 5000, __icon__))
     __addon__.setSetting('xbmc_extractor', 'false')
     __addon__.setSetting('firstrun', 'false')
   else:
     __addon__.setSetting('firstrun', 'false')
+    if kodi_major_version >= 18:
+      if xbmc.getCondVisibility("System.HasAddon(vfs.rar)") == 0:
+        xbmc.executebuiltin("InstallAddon(vfs.rar)")
+        xbmc.executebuiltin('SendClick(11)')
+        xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%('Rar Arhive','Just installed', 4000, __icon__))
+        xbmc.sleep(5000)
+      if xbmc.getCondVisibility("System.HasAddon(vfs.libarchive)") == 0:  
+        xbmc.executebuiltin("InstallAddon(vfs.libarchive)")
+        xbmc.executebuiltin('SendClick(11)')
+        xbmc.executebuiltin('Notification(%s, %s, %d, %s)'%('Archive support','Just installed', 4000, __icon__))
+        xbmc.sleep(5000)
     if __addon__.getSetting('xbmc_extractor') == 'true':
       __addon__.setSetting('rarlab', 'false')
       __addon__.setSetting('extract_me', 'false')
