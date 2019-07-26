@@ -2,8 +2,8 @@
 
 from nsub import log_my, savetofile, list_key
 from common import *
-
-values = {'q': '','type': 'downloads_file','search_and_or': 'or','search_in': 'titles','sortby': 'relevancy', 'csrfKey': ''}
+import xbmcgui
+values = {'q': '','type': 'downloads_file','search_and_or': 'or','search_in': 'titles','sortby': 'relevancy'}
 
 headers = {
     'Upgrade-Insecure-Requests' : '1',
@@ -47,23 +47,7 @@ def read_sub (mov):
   list = []
 
   values['q'] = mov
-
-  request = urllib2.Request(url, None, headers)
-  response = urllib2.urlopen(request)
-  if response.info().get('Content-Encoding') == 'gzip':
-    buf = StringIO(response.read())
-    f = gzip.GzipFile(fileobj=buf)
-    data = f.read()
-    f.close()
-    buf.close()
-  else:  
-    data = response.read()
-    response.close()
-  csrfKey = re.search('input type="hidden" name="csrfKey" value="(.+?)"',data).group(1)
-  values['csrfKey'] = csrfKey
-
   enc_values = urllib.urlencode(values)
-  log_my('Url: ', (url)+ '/index.php?/search/&', 'Headers: ', (headers), 'Values: ', (enc_values))
   request = urllib2.Request(url + '/index.php?/search/&'+enc_values.replace('+','%20'), None, headers)
 
   response = urllib2.urlopen(request)
@@ -88,6 +72,15 @@ def read_sub (mov):
 
   return list
 
+
+        
+def getResult(subs):
+    IDs = [i[1] for i in subs]
+    displays = [i[0] for i in subs]
+    idx = xbmcgui.Dialog().select('Select subs',displays)
+    if idx < 0: return None
+    return IDs[idx]
+      
 def get_sub(id, sub_url, filename):
   request = urllib2.Request(sub_url, None, headers)
   response = urllib2.urlopen(request)
@@ -117,30 +110,34 @@ def get_sub(id, sub_url, filename):
     'Referer': nexturl,
     'Host': 'www.easternspirit.org'
 }
-  s = {} 
+  
   request = urllib2.Request(nexturl, None, dheaders)
+  request.add_header('Cookie',mycook)
   log_my(response.code, BaseHTTPServer.BaseHTTPRequestHandler.responses[response.code][0])
   response = urllib2.urlopen(request)
-  checker = response.info()['Content-Type']
-  if checker == 'application/x-rar-compressed':
-      s['data'] = response.read()
-      s['fname'] = response.info()['Content-Disposition'].split('filename=')[1].strip('"')
+  s = {} 
+  if response.info().get('Content-Type') == 'application/x-rar-compressed':
+    s['data'] = response.read()
+    s['fname'] = response.info()['Content-Disposition'].split('filename=')[1].strip('"')
+    return s
   else:
+    #TV SERIES FIX
     if response.info().get('Content-Encoding') == 'gzip':
       buf = StringIO(response.read())
       f = gzip.GzipFile(fileobj=buf)
-      data = f.read()
+      data2 = f.read()
       f.close()
       buf.close()
     else:
-      data = response.read()
-    data =  re.sub('[\r\n]+','',data)
-    match = re.findall("'ipsType_break ipsContained'>[^<>]+<.+?a href='([^']+)'", data)
-    for link in match:
-        link = link.replace('&amp;','&')
-        dheaders['Referer'] = link
-        request = urllib2.Request(link, None, dheaders)
-        log_my(response.code, BaseHTTPServer.BaseHTTPRequestHandler.responses[response.code][0])
-        s['data'] = response.read()
-        s['fname'] = response.info()['Content-Disposition'].split('filename=')[1].strip('"')   
-  return s
+      data2 = response.read()
+    data2 =  re.sub('[\r\n]+','',data2)
+    data2 =  re.sub('&amp;','&',data2)
+    match = re.findall("ipsType_break ipsContained'>([^<>]+)<.+?a href='([^']+)'", data2)
+    sub_url = getResult(match)
+    request = urllib2.Request(sub_url, None, dheaders)
+    request.add_header('Cookie',mycook)
+    response = urllib2.urlopen(request)
+    log_my(response.code, BaseHTTPServer.BaseHTTPRequestHandler.responses[response.code][0])
+    s['data'] = response.read()
+    s['fname'] = response.info()['Content-Disposition'].split('filename=')[1].strip('"')
+    return s
