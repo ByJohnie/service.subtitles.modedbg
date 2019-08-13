@@ -199,7 +199,7 @@ def Download(id,url,filename, stack=False):
           }
       url = 'https://subsunacs.net' + url + '!'
       req = requests.get(url, headers=headers)
-      match = re.compile('<a href="(.+?)">(.+?)</a></label><label').findall(req.text)
+      match = re.compile('<a href="(.+?)">(.+?)</a></label>').findall(req.text)
       for suburl, subname in match:
         subname = subname.encode('cp1251', 'ignore').decode('cp1251', 'ignore').encode('utf-8', 'ignore').replace(' ','.')
         #suname = subname.encode('utf-8')
